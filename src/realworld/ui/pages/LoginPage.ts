@@ -1,6 +1,6 @@
 import { BasePage } from '../../base/base-page';
 
-export class Login extends BasePage {
+export class LoginPage extends BasePage {
 
     Form = {
         Email: this.page.getByRole('textbox', { name: 'Email' }),
@@ -9,5 +9,11 @@ export class Login extends BasePage {
 
      Buttons = {   
         SignIn: this.page.getByRole('button', { name: 'Sign in' }),
+     }
+
+     async login(email: string, password: string) {
+        await this.Form.Email.fill(email);
+        await this.Form.Password.fill(password);
+        await this.Buttons.SignIn.click();
      }
 }

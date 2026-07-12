@@ -1,11 +1,11 @@
 import { Page } from '@playwright/test';
 import { Navbar } from './components/Navbar';
-import { Login } from './pages/Login';
+import { LoginPage } from './pages/LoginPage';
 
 export class RealWorldPageManager {
     private readonly _page: Page;
     private _navbar?: Navbar;
-    private _login?: Login;
+    private _loginPage?: LoginPage;
 
     constructor(page: Page) {
         this._page = page;
@@ -19,7 +19,7 @@ export class RealWorldPageManager {
         return this._navbar ??= new Navbar(this._page);
     }
 
-    get login(): Login {
-        return this._login ??= new Login(this._page);
+    get loginPage(): LoginPage {
+        return this._loginPage ??= new LoginPage(this._page);
     }
 }

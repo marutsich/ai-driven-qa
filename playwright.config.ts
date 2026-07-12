@@ -3,13 +3,21 @@ import { config } from 'dotenv';
 
 config();
 
-type RealWorldProjectData = {
-  baseUrl: string;
+type RealWorldUser = {
+  name: string;
   username: string;
   password: string;
 };
 
-const realWorldProjectData: RealWorldProjectData = JSON.parse(process.env.PROJECT_DATA || '{}');
+type RealWorldProjectData = {
+  baseUrl: string;
+  apiBaseUrl: string;
+  users: RealWorldUser[];
+};
+
+export const realWorldProjectData: RealWorldProjectData = JSON.parse(process.env.REAL_WORLD_PROJECT_DATA || '{}');
+
+export const authFilePath = (userName: string) => `.auth/realworld-${userName}.json`;
 
 export default defineConfig({
   testDir: './src',
@@ -35,7 +43,7 @@ export default defineConfig({
       testMatch: '**/realworld/**/*.setup.ts',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: realWorldProjectData?.baseUrl || 'https://demo.realworld.show/',
+        baseURL: realWorldProjectData?.baseUrl || 'http://localhost:8000/',
       }
     },
     {
@@ -43,8 +51,8 @@ export default defineConfig({
       testMatch: '**/realworld/**/*.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: realWorldProjectData?.baseUrl || 'https://demo.realworld.show/',
-        storageState: '.auth/realworld.json',
+        baseURL: realWorldProjectData?.baseUrl || 'http://localhost:8000/',
+        storageState: authFilePath(realWorldProjectData?.users?.[0]?.name ?? 'default'),
       },
       dependencies: ['realworld-setup'],
     },
