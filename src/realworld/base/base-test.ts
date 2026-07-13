@@ -5,7 +5,7 @@ import { RealWorldPageManager } from '../ui/RealWorldPageManager';
 import { ApiManager } from '../api/ApiManager';
 
 // RealWorld Conduit stores the JWT in localStorage under this key.
-const JWT_STORAGE_KEY = 'jwtToken';
+const JWT_STORAGE_KEY = 'token';
 
 type StorageState = {
     origins?: { localStorage?: { name: string; value: string }[] }[];
@@ -55,7 +55,7 @@ export const test = base.extend<Fixtures>({
             const token = userName ? extractToken(authFilePath(userName)) : null;
 
             const context = await request.newContext({
-                baseURL: realWorldProjectData?.apiBaseUrl || 'http://localhost:8000/api',
+                baseURL: realWorldProjectData?.apiBaseUrl || 'http://localhost:8000/api/',
             });
             contexts.push(context);
             return new ApiManager(context, token);
