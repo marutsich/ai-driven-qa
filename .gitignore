@@ -1,4 +1,10 @@
 
+# Environment
+.env
+
+# Demo
+DEMO_SCENARIO.md
+
 # Playwright
 node_modules/
 /test-results/

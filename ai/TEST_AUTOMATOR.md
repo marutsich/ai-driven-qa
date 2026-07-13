@@ -26,7 +26,8 @@ Navigate the full scenario in the browser.
 Inspect selectors via `mcp_playwright_browser_snapshot` / `mcp_playwright_browser_find` — validate every locator before writing code.
 **Do NOT assume selectors are correct from context alone.**
 
-**Auth — inject storage state from `.auth/` folder (no setup run needed):**
+**Auth — run setup first to get fresh tokens, then inject storage state from `.auth/` folder:**
+0. Run the setup project to refresh tokens: `npx playwright test --project realworld-setup --reporter=line`
 1. Read the JWT from `.auth/realworld-user1.json` → `origins[0].localStorage` array, entry with `name === "token"`, take its `value`
 2. Navigate to the app (`http://localhost:8000`)
 3. Inject the token and reload:
