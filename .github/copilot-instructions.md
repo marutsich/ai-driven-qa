@@ -2,31 +2,17 @@
 
 ## Project
 Playwright test automation demo project for the [RealWorld](https://demo.realworld.show/) app (Medium clone).
-Stack: TypeScript, Playwright. Auth via storage state (`.auth/realworld.json`).
-
+Stack: TypeScript, Playwright. 
 ## Key Directories
 
 | Path | Purpose |
 |------|---------|
-| `ai/` | Agent instruction files |
 | `user-stories/realworld/` | User stories per app |
 | `test-cases/realworld/{module}/{US-ID}/ui/` | UI test cases (.md) |
 | `test-cases/realworld/{module}/{US-ID}/api/` | API test cases (.md) |
 | `src/realworld/ui/` | Page Objects |
 | `src/realworld/tests/` | Playwright spec files |
 | `docs/realworld/` | OpenAPI spec and other references |
-
----
-
-## Agent Routing
-
-When the user's request matches a key phrase — load the corresponding agent file and follow it fully before doing anything else.
-
-| Key phrases | Agent | Invoke with |
-|-------------|-------|-------------|
-| "analyze", "analize", "analyze requirements", "check requirements" | Requirements Analysis | `#file:ai/REQUIREMENTS_ANALISYS.md` |
-| "design test cases", "create test cases", "write test cases" | Test Designer | `#file:ai/TEST_DESIGNER.md` |
-| "automate", "write test", "automate UI", "automate API" | Test Automator | `#file:ai/TEST_AUTOMATOR.md` |
 
 ---
 
