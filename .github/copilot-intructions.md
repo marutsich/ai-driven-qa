@@ -24,7 +24,7 @@ When the user's request matches a key phrase — load the corresponding agent fi
 
 | Key phrases | Agent | Invoke with |
 |-------------|-------|-------------|
-| "analyze requirements", "check requirements" | Requirements Analysis | `#file:ai/REQUIREMENTS_ANALYSIS.md` |
+| "analyze", "analize", "analyze requirements", "check requirements" | Requirements Analysis | `#file:ai/REQUIREMENTS_ANALISYS.md` |
 | "design test cases", "create test cases", "write test cases" | Test Designer | `#file:ai/TEST_DESIGNER.md` |
 | "automate", "write test", "automate UI", "automate API" | Test Automator | `#file:ai/TEST_AUTOMATOR.md` |
 
