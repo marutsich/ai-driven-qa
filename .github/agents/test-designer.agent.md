@@ -79,12 +79,13 @@ For each endpoint relevant to this story:
 
 ### Step 3c — Design E2E Test Case
 
-Design **one E2E scenario** per story that covers the main user journey end-to-end.
+Design **one E2E scenario** per story — a single, focused positive happy-path journey.
 
 - Layer: `UI`
 - Tag: `E2E`
-- Must touch the majority of the story's core functionality in a single connected flow
-- Should be realistic: reflects how a real user would use the feature
+- **One main positive flow only** — do not combine edge cases, negative steps, or optional branches into this case
+- Steps should follow the natural user journey from entry point to final observable outcome
+- Keep it straight: no detours, no "also check X while we're here"
 - This test case is the **primary automation candidate** for the Test Automator agent
 - Place in: `test-cases/{app}/{module}/{US-ID}/ui/`
 

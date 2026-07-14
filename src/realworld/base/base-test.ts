@@ -55,7 +55,7 @@ export const test = base.extend<Fixtures>({
             const token = userName ? extractToken(authFilePath(userName)) : null;
 
             const context = await request.newContext({
-                baseURL: realWorldProjectData?.apiBaseUrl || 'http://localhost:8000/api/',
+                baseURL: realWorldProjectData?.apiBaseUrl || 'http://localhost:8000/api',
             });
             contexts.push(context);
             return new ApiManager(context, token);
