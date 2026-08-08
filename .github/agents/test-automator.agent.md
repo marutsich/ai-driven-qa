@@ -45,8 +45,9 @@ For a different user substitute `realworld-user2.json`.
 
 ### Step 3 — Write the Test
 - Use the `test` fixture from `src/realworld/base/base-test.ts` (provides `realWorldPageManager`)
-- Wrap each logical action + assertion in `test.step('Description', async () => { ... })`
+- Wrap each logical action + assertion in `test.step('Description', async () => { ... })` with a description matching the test-case markdown
 - Verify navigation by UI state, not URLs
+- Add a one-line comment only for non-obvious things (e.g. `// KNOWN BUG (AC-14): ...`)
 
 ### Step 4 — Run and Verify
 ```bash
