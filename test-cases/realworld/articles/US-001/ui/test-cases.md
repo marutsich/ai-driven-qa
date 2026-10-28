@@ -454,7 +454,7 @@
 
 ---
 
-## US001-TC-019: [E2E] Full happy-path journey — login to published article visible in global feed
+## US001-TC-019: [E2E] Full happy-path journey — authenticated user publishes article visible in global feed
 
 | Field | Value |
 |-------|-------|
@@ -465,14 +465,14 @@
 | **Technique** | State Transition |
 
 **Preconditions:**
-- A registered user account exists (email and password known)
+- Setup has saved a registered user's authenticated storage state; the UI fixture loads it without another login
 - No article with the title "E2E Test Article" exists for this user
 
 **Steps:**
 
 | # | Action | Expected Result |
 |---|--------|-----------------|
-| 1 | Open the application and log in with valid credentials | User is authenticated; navbar shows "New Article" link |
+| 1 | Open the application using the authenticated UI fixture | User is authenticated; navbar shows "New Article" link |
 | 2 | Click "New Article" in the navbar | Editor page (`/editor`) opens |
 | 3 | Enter "E2E Test Article" in Title, "E2E description" in Description, "E2E body content." in Body | All three fields populated |
 | 4 | Type "e2e" in the Tags input and press Enter | Tag chip "e2e" appears; Tags input clears |

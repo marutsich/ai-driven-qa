@@ -8,13 +8,11 @@ test.describe('US-001. Publish Article', () => {
         throw new Error('Project data is incomplete. Please set the REAL_WORLD_PROJECT_DATA environment variable with a users array.');
     }
 
-    test('US001-TC-019. [E2E] Full happy-path journey — login to published article visible in global feed @E2E', async ({ createPageManagerAs }) => {
-        const pm = await createPageManagerAs(null);
+    test('US001-TC-019. [E2E] Full happy-path journey — authenticated user publishes article visible in global feed @E2E', async ({ createPageManagerAs }) => {
+        const pm = await createPageManagerAs(publishingUser.name);
         const title = `E2E Test Article ${Date.now()}`;
 
-        await test.step('Step 1: Open the app and log in — navbar shows New Article', async () => {
-            await pm.navbar.SignIn.click();
-            await pm.loginPage.login(publishingUser.username, publishingUser.password);
+        await test.step('Step 1: Open the app as an authenticated user — navbar shows New Article', async () => {
             await expect(pm.navbar.NewArticle).toBeVisible();
         });
 

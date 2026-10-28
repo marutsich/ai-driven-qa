@@ -1,0 +1,17 @@
+.agents
+.auth
+.codex
+.env
+.example.env
+.github
+.playwright-mcp
+.vscode
+.env.*
+/docs
+/node_modules
+/playwright-report
+/test-cases
+/test-results
+/user-stories
+AGENTS.md
+README.md

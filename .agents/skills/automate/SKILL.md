@@ -161,6 +161,8 @@ npx playwright test --project realworld --reporter=line
 > If a scenario failed first and then passed after a fix, record: root cause + fix.
 > When an approach changes, UPDATE the entry — don't duplicate.
 
+- The Playwright MCP code sandbox does not expose `require`, `process`, or dynamic imports. Load saved auth with `page.context().browser().newContext({ storageState: absolutePath })` instead of reading or printing token values; close the temporary context after inspection.
+
 - On the hosted app, a timeout waiting for New Article can mean rejected credentials rather than a changed navbar locator. Check for login errors without exposing passwords; use a different configured account only with user authorization.
 - For the hosted demo's expiring accounts, register configured users in setup before saving storage state; repeated registration with the same credentials was verified to succeed. The current config uses `name` as the registration username and `username` as the email.
 - If MCP reports its browser profile is already in use, identify the process holding `SingletonLock` and close only the confirmed old MCP-owned browser before retrying. Scope navbar snapshots to `.navbar`, since `nav` can also match feed pagination.
