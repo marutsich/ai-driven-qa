@@ -1,0 +1,11 @@
+# Project-scoped MCP server; loaded when this repository is trusted.
+[mcp_servers.playwright]
+command = "npx"
+args = ["--no-install", "@playwright/mcp", "--browser", "chromium"]
+startup_timeout_sec = 30
+
+[mcp_servers.playwright.tools.browser_navigate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_run_code_unsafe]
+approval_mode = "approve"

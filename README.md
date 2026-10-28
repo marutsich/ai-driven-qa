@@ -1,8 +1,26 @@
 # AI-Driven QA Pipeline
 
-Demo project showing how GitHub Copilot custom agents can support the full QA workflow: requirements analysis, test design, and test automation.
+Demo project showing how Codex skills and GitHub Copilot custom agents can support the full QA workflow: requirements analysis, test design, and test automation.
 
-The project combines a TypeScript + Playwright automation framework with three custom Copilot agents that turn a user story into clarified requirements, traceable UI/API test cases, and executable automated tests.
+The project combines a TypeScript + Playwright automation framework with three QA workflows available as Codex skills and Copilot agents. They turn a user story into clarified requirements, traceable UI/API test cases, and executable automated tests.
+
+## Using Codex in VS Code
+
+Codex reads the project conventions from `AGENTS.md` and discovers the QA skills in `.agents/skills/`.
+
+| Codex prompt | Workflow |
+|--------------|----------|
+| `$analyze user-stories/realworld/US-001-publish-article.md` | Review requirements and produce prioritized BA questions |
+| `$design-tests user-stories/realworld/US-001-publish-article-v2.md` | Design traceable UI/API test cases |
+| `$automate test-cases/realworld/articles/US-001/ui/test-cases.md` | Implement selected cases and verify Playwright tests |
+
+Include the specific case IDs when automating only part of a test-case document. You can also request these workflows in plain language.
+
+Playwright MCP is configured for Codex in `.codex/config.toml`. It uses the project's installed `@playwright/mcp` dependency with `npx --no-install`, avoiding an interactive package installation at server startup. Run `npm ci` after cloning to install the locked dependencies.
+
+Open this repository as a trusted project in Codex. After adding the configuration, restart the Codex extension and start a new conversation so it loads the project instructions and MCP tools. Run `codex mcp list` from the repository root to check the configured server. The existing `.vscode/mcp.json` and `.github/` files continue to support Copilot.
+
+Codex setup references: [MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli), [AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), and [local skills](https://learn.chatgpt.com/docs/build-skills).
 
 ## Application Under Test
 
@@ -102,6 +120,9 @@ Key framework conventions:
 ```text
 .github/agents/       Custom GitHub Copilot agents
 .github/prompts/      Slash commands for agent workflows
+AGENTS.md             Codex project instructions
+.agents/skills/       Codex QA skills: analyze, design-tests, automate
+.codex/config.toml    Codex Playwright MCP configuration
 docs/realworld/       OpenAPI specification and reference docs
 user-stories/         Original and clarified user stories
 test-cases/           Generated UI and API test cases
