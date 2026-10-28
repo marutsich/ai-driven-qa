@@ -3,9 +3,9 @@ import { expect } from '@playwright/test';
 import { realWorldProjectData } from '../../../../playwright.config';
 
 test.describe('US-001. Publish Article', () => {
-    const publishingUser = realWorldProjectData.users.find(user => user.name === 'pedro');
+    const publishingUser = realWorldProjectData.users[0];
     if (!publishingUser) {
-        throw new Error('Configure the authorized publishing account "pedro" in REAL_WORLD_PROJECT_DATA.users.');
+        throw new Error('Project data is incomplete. Please set the REAL_WORLD_PROJECT_DATA environment variable with a users array.');
     }
 
     test('US001-TC-019. [E2E] Full happy-path journey — login to published article visible in global feed @E2E', async ({ createPageManagerAs }) => {
