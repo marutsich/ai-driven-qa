@@ -5,7 +5,7 @@ import { RealWorldPageManager } from '../ui/RealWorldPageManager';
 import { ApiManager } from '../api/ApiManager';
 
 // RealWorld Conduit stores the JWT in localStorage under this key.
-const JWT_STORAGE_KEY = 'token';
+const JWT_STORAGE_KEY = 'jwtToken';
 
 type StorageState = {
     origins?: { localStorage?: { name: string; value: string }[] }[];

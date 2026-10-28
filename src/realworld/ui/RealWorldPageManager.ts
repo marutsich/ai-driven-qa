@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
 import { Navbar } from './components/Navbar';
 import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
 import { EditorPage } from './pages/EditorPage';
 import { ArticleViewPage } from './pages/ArticleViewPage';
 import { HomePage } from './pages/HomePage';
@@ -9,6 +10,7 @@ export class RealWorldPageManager {
     private readonly _page: Page;
     private _navbar?: Navbar;
     private _loginPage?: LoginPage;
+    private _registerPage?: RegisterPage;
     private _editorPage?: EditorPage;
     private _articleViewPage?: ArticleViewPage;
     private _homePage?: HomePage;
@@ -27,6 +29,10 @@ export class RealWorldPageManager {
 
     get loginPage(): LoginPage {
         return this._loginPage ??= new LoginPage(this._page);
+    }
+
+    get registerPage(): RegisterPage {
+        return this._registerPage ??= new RegisterPage(this._page);
     }
 
     get editorPage(): EditorPage {

@@ -476,7 +476,7 @@
 | 2 | Click "New Article" in the navbar | Editor page (`/editor`) opens |
 | 3 | Enter "E2E Test Article" in Title, "E2E description" in Description, "E2E body content." in Body | All three fields populated |
 | 4 | Type "e2e" in the Tags input and press Enter | Tag chip "e2e" appears; Tags input clears |
-| 5 | Click "Publish Article" | User is redirected to `/article/{slug}`; article displays correct title, description, body, and tag "e2e"; Edit and Delete controls are visible |
+| 5 | Click "Publish Article" | User is redirected to `/article/{slug}`; article displays correct title, body, and tag "e2e"; Edit and Delete controls are visible |
 | 6 | Navigate to the home page | The published article "E2E Test Article" appears in the global feed |
 
 ---
