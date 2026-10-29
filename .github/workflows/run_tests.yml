@@ -1,0 +1,29 @@
+name: Run Tests
+
+on: workflow_dispatch
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: read
+    steps:
+    -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - 
+        name: Pull Image
+        run: docker pull ghcr.io/marutsich/ai-driven-qa:latest
+      - 
+        name: Run container and execute Tests
+        env:
+          REAL_WORLD_PROJECT_DATA: ${{ secrets.REAL_WORLD_PROJECT_DATA }}
+        run: |
+          docker run --rm --init --ipc=host \
+            -e CI \
+            -e REAL_WORLD_PROJECT_DATA \
+            ghcr.io/marutsich/ai-driven-qa:latest
