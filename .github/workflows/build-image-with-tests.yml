@@ -13,7 +13,8 @@ jobs:
       - name: Run container with Tests
         env:
           REAL_WORLD_PROJECT_DATA: ${{ secrets.REAL_WORLD_PROJECT_DATA }}
-        run: docker run --rm --init --ipc=host \
-              -e CI \
-              -e REAL_WORLD_PROJECT_DATA \
-              ai-driven-qa:ci
+        run: |
+          docker run --rm --init --ipc=host \
+            -e CI \
+            -e REAL_WORLD_PROJECT_DATA \
+            ai-driven-qa:ci
