@@ -23,7 +23,20 @@ jobs:
         env:
           REAL_WORLD_PROJECT_DATA: ${{ secrets.REAL_WORLD_PROJECT_DATA }}
         run: |
+          mkdir -p playwright-report test-results
+
           docker run --rm --init --ipc=host \
             -e CI \
             -e REAL_WORLD_PROJECT_DATA \
+            --mount type=bind,source="$(pwd)/playwright-report",target=/app/playwright-report \
+            --mount type=bind,source="$(pwd)/test-results",target=/app/test-results \
             ghcr.io/marutsich/ai-driven-qa:latest
+      -
+        name: Upload Artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            playwright-report
+            test-results
+          retention-days: 3
