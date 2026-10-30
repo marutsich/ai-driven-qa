@@ -83,7 +83,7 @@ test.describe('US-001. Publish Article', () => {
                 description: 'BVA boundary test',
                 body: 'BVA boundary body',
             });
-            expect(response.status()).toBe(202);
+            expect(response.status()).toBe(201);
             const responseBody = await response.json();
             expect(responseBody).toMatchObject({
                 article: {

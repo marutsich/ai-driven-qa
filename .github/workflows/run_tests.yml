@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       packages: read
+    outputs:
+      report_uploaded: ${{ steps.pages-artifact.outcome }}
     steps:
       -
         name: Login to GitHub Container Registry
@@ -40,3 +42,28 @@ jobs:
             playwright-report
             test-results
           retention-days: 3
+      -
+        name: Prepare report for Pages
+        id: pages-artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: playwright-report/
+  publish-report:
+    needs: run-tests
+    if: ${{ !cancelled() && needs.run-tests.outputs.report_uploaded == 'success' }}
+    runs-on: ubuntu-24.04
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - 
+        name: Deploy report
+        id: deployment
+        uses: actions/deploy-pages@v4
