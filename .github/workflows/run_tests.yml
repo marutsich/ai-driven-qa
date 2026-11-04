@@ -1,6 +1,13 @@
 name: Run Tests
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Image tag — latest or commit SHA
+        type: string
+        required: true
+        default: latest
 
 jobs:
   run-tests:
@@ -9,6 +16,8 @@ jobs:
       packages: read
     outputs:
       report_uploaded: ${{ steps.pages-artifact.outcome }}
+    env:
+      IMAGE_TAG: ${{ inputs.image_tag }}
     steps:
       -
         name: Login to GitHub Container Registry
@@ -19,7 +28,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - 
         name: Pull Image
-        run: docker pull ghcr.io/marutsich/ai-driven-qa:latest
+        run: |
+          echo "Pulling ghcr.io/marutsich/ai-driven-qa:$IMAGE_TAG"
+          docker pull "ghcr.io/marutsich/ai-driven-qa:$IMAGE_TAG"
       - 
         name: Run container and execute Tests
         env:
@@ -32,7 +43,7 @@ jobs:
             -e REAL_WORLD_PROJECT_DATA \
             --mount type=bind,source="$(pwd)/playwright-report",target=/app/playwright-report \
             --mount type=bind,source="$(pwd)/test-results",target=/app/test-results \
-            ghcr.io/marutsich/ai-driven-qa:latest
+            "ghcr.io/marutsich/ai-driven-qa:$IMAGE_TAG"
       -
         name: Upload Artifacts
         if: ${{ !cancelled() }}
