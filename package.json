@@ -9,13 +9,19 @@
     "test:setup": "playwright test --project realworld-setup",
     "report": "playwright show-report"
   },
-  "keywords": ["playwright", "test-automation", "qa", "typescript", "realworld"],
+  "keywords": [
+    "playwright",
+    "test-automation",
+    "qa",
+    "typescript",
+    "realworld"
+  ],
   "author": "Artyom Marutsich",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
     "@playwright/mcp": "^0.0.78",
-    "@playwright/test": "1.61.1",
+    "@playwright/test": "1.64.1",
     "@types/node": "26.1.0",
     "dotenv": "^17.4.2"
   }
