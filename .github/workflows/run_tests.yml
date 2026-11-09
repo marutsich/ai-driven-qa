@@ -36,13 +36,14 @@ jobs:
         env:
           REAL_WORLD_PROJECT_DATA: ${{ secrets.REAL_WORLD_PROJECT_DATA }}
         run: |
-          mkdir -p playwright-report test-results
+          mkdir -p playwright-report test-results allure-results
 
           docker run --rm --init --ipc=host \
             -e CI \
             -e REAL_WORLD_PROJECT_DATA \
             --mount type=bind,source="$(pwd)/playwright-report",target=/app/playwright-report \
             --mount type=bind,source="$(pwd)/test-results",target=/app/test-results \
+            --mount type=bind,source="$(pwd)/allure-results",target=/app/allure-results \
             "ghcr.io/marutsich/ai-driven-qa:$IMAGE_TAG"
       -
         name: Upload Artifacts
@@ -52,6 +53,7 @@ jobs:
           path: |
             playwright-report
             test-results
+            allure-results
           retention-days: 3
       -
         name: Prepare report for Pages

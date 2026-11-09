@@ -1,0 +1,37 @@
+name: Run Tests from Source
+
+on: workflow_dispatch
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      -
+        name: Checkout Repository
+        uses: actions/checkout@v7
+      -
+        name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      -
+        name: Install packages and dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      -
+        name: Run Tests
+        env:
+          REAL_WORLD_PROJECT_DATA: ${{ secrets.REAL_WORLD_PROJECT_DATA }}
+        run: npm test
+      -
+        name: Upload Artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            playwright-report
+            test-results
+            allure-results
+          retention-days: 3
