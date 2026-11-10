@@ -45,7 +45,7 @@ jobs:
             allure-results
           retention-days: 3
       -
-        name: Prepare report for Pages
+        name: Prepare Report for Pages
         id: pages-artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-pages-artifact@v4

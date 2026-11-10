@@ -13,12 +13,19 @@ jobs:
   run-tests:
     runs-on: ubuntu-24.04
     permissions:
+      contents: read
       packages: read
     outputs:
       report_uploaded: ${{ steps.pages-artifact.outcome }}
     env:
       IMAGE_TAG: ${{ inputs.image_tag }}
     steps:
+      -
+        name: Checkout Required Repository Files
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: reports/index.html
+          sparse-checkout-cone-mode: false
       -
         name: Login to GitHub Container Registry
         uses: docker/login-action@v4
@@ -48,6 +55,7 @@ jobs:
             "ghcr.io/marutsich/ai-driven-qa:$IMAGE_TAG"
       -
         name: Prepare Reports
+        if: ${{ !cancelled() }}
         run: |
           mv allure-report reports/allure-report
           mv playwright-report reports/playwright-report
