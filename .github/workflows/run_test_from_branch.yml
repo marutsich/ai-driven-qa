@@ -5,6 +5,8 @@ on: workflow_dispatch
 jobs:
   run-tests:
     runs-on: ubuntu-24.04
+    outputs:
+      report_uploaded: ${{ steps.pages-artifact.outcome }}
     steps:
       -
         name: Checkout Repository
@@ -24,14 +26,45 @@ jobs:
         name: Run Tests
         env:
           REAL_WORLD_PROJECT_DATA: ${{ secrets.REAL_WORLD_PROJECT_DATA }}
-        run: npm test
+        run: npx allure run -- npm test
+      -
+        name: Prepare Reports
+        if: ${{ !cancelled() }} 
+        run: |
+          mv allure-report reports/allure-report
+          mv playwright-report reports/playwright-report
       -
         name: Upload Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
           path: |
-            playwright-report
+            reports
             test-results
             allure-results
           retention-days: 3
+      -
+        name: Prepare Report for Pages
+        id: pages-artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: reports
+  publish-report:
+    needs: run-tests
+    if: ${{ !cancelled() && needs.run-tests.outputs.report_uploaded == 'success' }}
+    runs-on: ubuntu-24.04
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - 
+        name: Deploy report
+        id: deployment
+        uses: actions/deploy-pages@v4
