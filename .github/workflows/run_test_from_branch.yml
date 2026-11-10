@@ -26,8 +26,7 @@ jobs:
         name: Run Tests
         env:
           REAL_WORLD_PROJECT_DATA: ${{ secrets.REAL_WORLD_PROJECT_DATA }}
-        run: |
-          npx allure run -- npm test
+        run: npx allure run -- npm test
       -
         name: Prepare Reports
         if: ${{ !cancelled() }} 
