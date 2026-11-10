@@ -89,12 +89,12 @@ test.describe('US-001. Publish Article', () => {
                 description: 'BVA boundary test',
                 body: 'BVA boundary body',
             });
-            expect(response.status()).toBe(201);
             const responseBody = await response.json();
             await test.info().attach('API response', {
                 body: JSON.stringify(responseBody, null, 2),
                 contentType: 'application/json',
             });
+            expect(response.status()).toBe(201);
             expect(responseBody).toMatchObject({
                 article: {
                     slug: expect.any(String),
