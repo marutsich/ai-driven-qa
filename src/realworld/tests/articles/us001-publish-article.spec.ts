@@ -1,6 +1,7 @@
 import { test } from '../../base/base-test';
 import { expect } from '@playwright/test';
 import { realWorldProjectData } from '../../../../playwright.config';
+import * as allure from 'allure-js-commons';
 
 test.describe('US-001. Publish Article', () => {
     const publishingUser = realWorldProjectData.users[0];
@@ -9,6 +10,11 @@ test.describe('US-001. Publish Article', () => {
     }
 
     test('US001-TC-019. [E2E] Full happy-path journey — authenticated user publishes article visible in global feed @E2E', async ({ createPageManagerAs }) => {
+        await allure.epic('RealWorld');
+        await allure.feature('Articles');
+        await allure.story('Publish article');
+        await allure.severity('critical');
+        
         const pm = await createPageManagerAs(publishingUser.name);
         const title = `E2E Test Article ${Date.now()}`;
 
@@ -85,6 +91,10 @@ test.describe('US-001. Publish Article', () => {
             });
             expect(response.status()).toBe(201);
             const responseBody = await response.json();
+            await test.info().attach('API response', {
+                body: JSON.stringify(responseBody, null, 2),
+                contentType: 'application/json',
+            });
             expect(responseBody).toMatchObject({
                 article: {
                     slug: expect.any(String),

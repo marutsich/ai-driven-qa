@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run Tests from Container
 
 on:
   workflow_dispatch:
@@ -36,7 +36,7 @@ jobs:
         env:
           REAL_WORLD_PROJECT_DATA: ${{ secrets.REAL_WORLD_PROJECT_DATA }}
         run: |
-          mkdir -p playwright-report test-results allure-results
+          mkdir -p playwright-report test-results allure-results allure-report
 
           docker run --rm --init --ipc=host \
             -e CI \
@@ -44,14 +44,20 @@ jobs:
             --mount type=bind,source="$(pwd)/playwright-report",target=/app/playwright-report \
             --mount type=bind,source="$(pwd)/test-results",target=/app/test-results \
             --mount type=bind,source="$(pwd)/allure-results",target=/app/allure-results \
+            --mount type=bind,source="$(pwd)/allure-report",target=/app/allure-report \
             "ghcr.io/marutsich/ai-driven-qa:$IMAGE_TAG"
+      -
+        name: Prepare Reports
+        run: |
+          mv allure-report reports/allure-report
+          mv playwright-report reports/playwright-report
       -
         name: Upload Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
           path: |
-            playwright-report
+            reports
             test-results
             allure-results
           retention-days: 3
@@ -61,7 +67,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-pages-artifact@v4
         with:
-          path: playwright-report/
+          path: reports
   publish-report:
     needs: run-tests
     if: ${{ !cancelled() && needs.run-tests.outputs.report_uploaded == 'success' }}

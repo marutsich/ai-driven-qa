@@ -4,4 +4,4 @@ COPY package.json package-lock.json ./
 RUN npm ci
 RUN npx playwright install --with-deps chromium
 COPY . .
-CMD ["npm", "test"]
+CMD ["sh", "-c", "npm test && npx allure generate allure-results"]
