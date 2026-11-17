@@ -15,9 +15,12 @@ type RealWorldProjectData = {
   users: RealWorldUser[];
 };
 
-export const realWorldProjectData: RealWorldProjectData = JSON.parse(process.env.REAL_WORLD_PROJECT_DATA || '{}');
+export const realWorldProjectData: RealWorldProjectData = JSON.parse(
+  process.env.REAL_WORLD_PROJECT_DATA || '{}',
+);
 
-export const authFilePath = (userName: string) => `.auth/realworld-${userName}.json`;
+export const authFilePath = (userName: string) =>
+  `.auth/realworld-${userName}.json`;
 
 export default defineConfig({
   testDir: './src',
@@ -30,7 +33,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [["html"], ["allure-playwright"]],
+  reporter: [['html'], ['allure-playwright']],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     screenshot: 'only-on-failure',
@@ -44,7 +47,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL: realWorldProjectData?.baseUrl || 'http://localhost:8000/',
-      }
+      },
     },
     {
       name: 'realworld',
@@ -52,10 +55,11 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL: realWorldProjectData?.baseUrl || 'http://localhost:8000/',
-        storageState: authFilePath(realWorldProjectData?.users?.[0]?.name ?? 'default'),
+        storageState: authFilePath(
+          realWorldProjectData?.users?.[0]?.name ?? 'default',
+        ),
       },
       dependencies: ['realworld-setup'],
     },
   ],
-
 });
