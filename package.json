@@ -7,7 +7,12 @@
     "test": "playwright test",
     "test:e2e": "playwright test --grep @E2E",
     "test:setup": "playwright test --project realworld-setup",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "typecheck": "tsc",
+    "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.ts\" \"*.ts\" \"*.mjs\" \"*.json\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"*.ts\" \"*.mjs\" \"*.json\"",
+    "prepare": "husky"
   },
   "keywords": [
     "playwright",
@@ -16,16 +21,23 @@
     "typescript",
     "realworld"
   ],
-  "author": "Artyom Marutsich",
+  "author": "Artsiom Marutsich",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/mcp": "^0.0.78",
     "@playwright/test": "1.64.1",
     "@types/node": "26.1.0",
     "allure": "3.33.0",
     "allure-js-commons": "3.14.0",
     "allure-playwright": "3.14.0",
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "eslint": "^10.15.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.1",
+    "prettier": "3.10.1",
+    "typescript": "~6.0.0",
+    "typescript-eslint": "^8.73.0"
   }
 }

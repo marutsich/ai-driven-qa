@@ -1,0 +1,33 @@
+name: Code Static Check
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+    run-static-checks:
+      runs-on: ubuntu-24.04
+      steps:
+        -
+          name: Checkout Repository
+          uses: actions/checkout@v7
+        -
+          name: Setup Node
+          uses: actions/setup-node@v7
+          with:
+            node-version: 24
+            cache: npm
+        -
+          name: Install packages and dependencies
+          env:
+            HUSKY: '0'
+          run: npm ci
+        -
+          name: Run Typescript Check
+          run: npm run typecheck
+        -
+          name: Run Linter
+          run: npm run lint
+        -
+          name: Run Format Check
+          run: npm run format:check

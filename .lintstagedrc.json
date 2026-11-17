@@ -1,0 +1,5 @@
+{
+  "src/**/*.ts": ["eslint", "prettier --write"],
+  "playwright.config.ts": ["eslint", "prettier --write"],
+  "./*.{json,mjs}": "prettier --write"
+}
