@@ -3,25 +3,6 @@ import { config } from 'dotenv';
 
 config({ quiet: true });
 
-type RealWorldUser = {
-  name: string;
-  username: string;
-  password: string;
-};
-
-type RealWorldProjectData = {
-  baseUrl: string;
-  apiBaseUrl: string;
-  users: RealWorldUser[];
-};
-
-export const realWorldProjectData: RealWorldProjectData = JSON.parse(
-  process.env.REAL_WORLD_PROJECT_DATA || '{}',
-);
-
-export const authFilePath = (userName: string) =>
-  `.auth/realworld-${userName}.json`;
-
 export default defineConfig({
   testDir: './src',
   /* Run tests in files in parallel */
@@ -30,8 +11,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* Limit CI to two workers. */
+  workers: process.env.CI ? 2 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [['html'], ['allure-playwright']],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -46,7 +27,6 @@ export default defineConfig({
       testMatch: '**/realworld/**/*.setup.ts',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: realWorldProjectData?.baseUrl || 'http://localhost:8000/',
       },
     },
     {
@@ -54,10 +34,6 @@ export default defineConfig({
       testMatch: '**/realworld/**/*.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: realWorldProjectData?.baseUrl || 'http://localhost:8000/',
-        storageState: authFilePath(
-          realWorldProjectData?.users?.[0]?.name ?? 'default',
-        ),
       },
       dependencies: ['realworld-setup'],
     },

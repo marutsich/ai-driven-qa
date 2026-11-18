@@ -5,7 +5,7 @@ import {
   request,
   test as base,
 } from '@playwright/test';
-import { authFilePath, realWorldProjectData } from '../../../playwright.config';
+import { authFilePath, getRealWorldProjectData } from '../config';
 import { RealWorldPageManager } from '../ui/RealWorldPageManager';
 import { ApiManager } from '../api/ApiManager';
 
@@ -13,37 +13,66 @@ import { ApiManager } from '../api/ApiManager';
 const JWT_STORAGE_KEY = 'jwtToken';
 
 type StorageState = {
-  origins?: { localStorage?: { name: string; value: string }[] }[];
+  origins?: {
+    origin: string;
+    localStorage?: { name: string; value: string }[];
+  }[];
 };
 
-function extractToken(stateFilePath: string): string | null {
+function extractToken(stateFilePath: string, expectedOrigin: string): string {
   const state: StorageState = JSON.parse(
     fs.readFileSync(stateFilePath, 'utf-8'),
   );
   for (const origin of state.origins ?? []) {
+    if (origin.origin !== expectedOrigin) continue;
     for (const item of origin.localStorage ?? []) {
-      if (item.name === JWT_STORAGE_KEY) {
+      if (item.name === JWT_STORAGE_KEY && item.value.trim()) {
         return item.value;
       }
     }
   }
-  return null;
+  throw new Error(
+    `No non-empty JWT found in storage state file: ${stateFilePath}`,
+  );
+}
+
+function selectUser(
+  userIndex: number | null | undefined,
+  users: ReturnType<typeof getRealWorldProjectData>['users'],
+  parallelIndex: number,
+): (typeof users)[number] | null {
+  if (userIndex === null) {
+    return null;
+  }
+
+  const index =
+    userIndex === undefined ? parallelIndex % users.length : userIndex;
+  if (!Number.isInteger(index) || index < 0 || index >= users.length) {
+    throw new RangeError(
+      `Invalid user index ${index}. Expected an integer between 0 and ${users.length - 1}.`,
+    );
+  }
+
+  return users[index];
 }
 
 type Fixtures = {
   createPageManagerAs: (
-    userName: string | null,
+    userIndex?: number | null,
   ) => Promise<RealWorldPageManager>;
-  createApiManagerAs: (userName: string | null) => Promise<ApiManager>;
+  createApiManagerAs: (userIndex?: number | null) => Promise<ApiManager>;
 };
 
 export const test = base.extend<Fixtures>({
-  createPageManagerAs: async ({ browser }, use) => {
+  createPageManagerAs: async ({ browser }, use, testInfo) => {
+    const { baseUrl, users } = getRealWorldProjectData();
     const contexts: BrowserContext[] = [];
 
-    await use(async (userName: string | null) => {
+    await use(async (userIndex?: number | null) => {
+      const user = selectUser(userIndex, users, testInfo.parallelIndex);
       const context = await browser.newContext({
-        storageState: userName ? authFilePath(userName) : undefined,
+        baseURL: baseUrl,
+        storageState: user ? authFilePath(user.name) : undefined,
       });
       contexts.push(context);
       const page = await context.newPage();
@@ -56,15 +85,18 @@ export const test = base.extend<Fixtures>({
     }
   },
 
-  createApiManagerAs: async ({}, use) => {
+  createApiManagerAs: async ({}, use, testInfo) => {
+    const { apiBaseUrl, baseUrl, users } = getRealWorldProjectData();
     const contexts: APIRequestContext[] = [];
 
-    await use(async (userName: string | null) => {
-      const token = userName ? extractToken(authFilePath(userName)) : null;
+    await use(async (userIndex?: number | null) => {
+      const user = selectUser(userIndex, users, testInfo.parallelIndex);
+      const token = user
+        ? extractToken(authFilePath(user.name), new URL(baseUrl).origin)
+        : null;
 
       const context = await request.newContext({
-        baseURL:
-          realWorldProjectData?.apiBaseUrl || 'http://localhost:8000/api/',
+        baseURL: apiBaseUrl,
       });
       contexts.push(context);
       return new ApiManager(context, token);

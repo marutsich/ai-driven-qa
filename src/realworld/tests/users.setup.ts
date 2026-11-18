@@ -1,14 +1,10 @@
 import { expect } from '@playwright/test';
 import { test } from '../base/base-test';
-import { authFilePath, realWorldProjectData } from '../../../playwright.config';
+import { authFilePath, getRealWorldProjectData } from '../config';
 
-if (!realWorldProjectData?.users?.length) {
-  throw new Error(
-    'Project data is incomplete. Please set the REAL_WORLD_PROJECT_DATA environment variable with a users array.',
-  );
-}
+const { users } = getRealWorldProjectData();
 
-for (const user of realWorldProjectData.users) {
+for (const user of users) {
   test(`Registration setup - ${user.name}`, async ({ createPageManagerAs }) => {
     const pm = await createPageManagerAs(null);
 
