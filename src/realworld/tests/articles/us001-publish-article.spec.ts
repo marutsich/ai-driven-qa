@@ -1,16 +1,8 @@
 import { test } from '../../base/base-test';
 import { expect } from '@playwright/test';
-import { realWorldProjectData } from '../../../../playwright.config';
 import * as allure from 'allure-js-commons';
 
 test.describe('US-001. Publish Article', () => {
-  const publishingUser = realWorldProjectData.users[0];
-  if (!publishingUser) {
-    throw new Error(
-      'Project data is incomplete. Please set the REAL_WORLD_PROJECT_DATA environment variable with a users array.',
-    );
-  }
-
   test('US001-TC-019. [E2E] Full happy-path journey — authenticated user publishes article visible in global feed @E2E', async ({
     createPageManagerAs,
   }) => {
@@ -19,7 +11,7 @@ test.describe('US-001. Publish Article', () => {
     await allure.story('Publish article');
     await allure.severity('critical');
 
-    const pm = await createPageManagerAs(publishingUser.name);
+    const pm = await createPageManagerAs();
     const title = `E2E Test Article ${Date.now()}`;
 
     await test.step('Step 1: Open the app as an authenticated user — navbar shows New Article', async () => {
@@ -94,7 +86,7 @@ test.describe('US-001. Publish Article', () => {
   test('US001-TC-A010. Title at exactly 100 characters is accepted — 201 @Extended', async ({
     createApiManagerAs,
   }) => {
-    const api = await createApiManagerAs(publishingUser.name);
+    const api = await createApiManagerAs();
     const title = `TC-A010-${Date.now()}`.padEnd(100, 'x').slice(0, 100);
 
     await test.step('POST /articles with 100-char title returns 201', async () => {
