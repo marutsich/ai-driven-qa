@@ -20,4 +20,10 @@ export class ArticlesApiClient extends BaseApiClient {
       headers: this.authHeaders(),
     });
   }
+
+  deleteArticle(slug: string) {
+    return this.request.delete(`articles/${encodeURIComponent(slug)}`, {
+      headers: this.authHeaders(),
+    });
+  }
 }
