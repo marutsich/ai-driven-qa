@@ -132,10 +132,10 @@ test.describe('US-001. Publish Article', () => {
         body: rawBody,
         contentType: 'text/plain',
       });
-      expect(status).toBe(201);
       const responseBody = JSON.parse(rawBody.toString('utf8'));
       expect(responseBody?.article?.slug).toEqual(expect.stringMatching(/\S/));
       articleSlug = responseBody.article.slug;
+      expect(status).toBe(201);
       expect(responseBody).toMatchObject({
         article: {
           title,
