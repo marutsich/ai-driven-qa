@@ -3,6 +3,8 @@ import { expect } from '@playwright/test';
 import * as allure from 'allure-js-commons';
 
 test.describe('US-001. Publish Article', () => {
+  let articleSlug: string | null = null;
+
   test('US001-TC-019. [E2E] Full happy-path journey — authenticated user publishes article visible in global feed @E2E', async ({
     createPageManagerAs,
   }) => {
@@ -47,7 +49,25 @@ test.describe('US-001. Publish Article', () => {
     });
 
     await test.step('Step 5: Publish — navigate to article view; verify title, body, tag, Edit/Delete controls', async () => {
-      await pm.editorPage.publishButton.click();
+      const [publishResponse] = await Promise.all([
+        pm.page.waitForResponse(
+          (response) =>
+            response.request().method() === 'POST' &&
+            new URL(response.url()).pathname.endsWith('/articles'),
+        ),
+        pm.editorPage.publishButton.click(),
+      ]);
+      expect(publishResponse.status()).toBe(201);
+      const { article } = await publishResponse.json();
+      const slug = article?.slug;
+
+      expect(
+        slug,
+        'Publish response should contain a non-empty article slug',
+      ).toEqual(expect.stringMatching(/\S/));
+
+      articleSlug = slug;
+
       await expect(pm.articleViewPage.heading).toHaveText(title);
       await expect(pm.articleViewPage.body).toHaveText('E2E body content.');
       await expect(
@@ -100,10 +120,11 @@ test.describe('US-001. Publish Article', () => {
         body: JSON.stringify(responseBody, null, 2),
         contentType: 'application/json',
       });
+      expect(responseBody?.article?.slug).toEqual(expect.stringMatching(/\S/));
+      articleSlug = responseBody.article.slug;
       expect(response.status()).toBe(201);
       expect(responseBody).toMatchObject({
         article: {
-          slug: expect.any(String),
           title,
           description: 'BVA boundary test',
           body: 'BVA boundary body',
@@ -127,5 +148,16 @@ test.describe('US-001. Publish Article', () => {
         }
       }
     });
+  });
+
+  test.afterEach(async ({ createApiManagerAs }) => {
+    const slug = articleSlug;
+    articleSlug = null;
+
+    if (slug === null) return;
+
+    const api = await createApiManagerAs();
+    const response = await api.articles.deleteArticle(slug);
+    expect(response.status()).toBe(204);
   });
 });
