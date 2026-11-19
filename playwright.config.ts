@@ -25,6 +25,7 @@ export default defineConfig({
     {
       name: 'realworld-setup',
       testMatch: '**/realworld/**/*.setup.ts',
+      workers: 1,
       use: {
         ...devices['Desktop Chrome'],
       },

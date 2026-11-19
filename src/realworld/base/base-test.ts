@@ -57,6 +57,7 @@ function selectUser(
 }
 
 type Fixtures = {
+  userInfo: (userIndex?: number) => { name: string; email: string };
   createPageManagerAs: (
     userIndex?: number | null,
   ) => Promise<RealWorldPageManager>;
@@ -64,6 +65,16 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
+  userInfo: async ({}, use, testInfo) => {
+    const { users } = getRealWorldProjectData();
+
+    await use((userIndex) => {
+      const user = selectUser(userIndex, users, testInfo.parallelIndex);
+      if (user === null) throw new TypeError('userInfo requires a user');
+      return { name: user.name, email: user.username };
+    });
+  },
+
   createPageManagerAs: async ({ browser }, use, testInfo) => {
     const { baseUrl, users } = getRealWorldProjectData();
     const contexts: BrowserContext[] = [];
