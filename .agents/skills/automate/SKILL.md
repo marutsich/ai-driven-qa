@@ -168,3 +168,4 @@ npx playwright test --project realworld --reporter=line
 - If MCP reports its browser profile is already in use, identify the process holding `SingletonLock` and close only the confirmed old MCP-owned browser before retrying. Scope navbar snapshots to `.navbar`, since `nav` can also match feed pagination.
 - Inspect storage-state key names before injecting auth: demo.realworld.show uses `jwtToken`, while the self-hosted app used `token`. Inject the key verified in the refreshed state without printing its value.
 - After moving to demo.realworld.show, publishing redirects automatically and Edit Article is a link. Remove the self-hosted success-toast/manual-navigation workaround and validate the article view and link role in MCP.
+- On the hosted demo, parallel registration can save the same token for different configured users. For identity-sensitive verification, run setup with `--workers 1` and then run the tests with `--no-deps` to reuse the verified states.

@@ -7,12 +7,14 @@ test.describe('US-001. Publish Article', () => {
 
   test('US001-TC-019. [E2E] Full happy-path journey — authenticated user publishes article visible in global feed @E2E', async ({
     createPageManagerAs,
+    userInfo,
   }) => {
     await allure.epic('RealWorld');
     await allure.feature('Articles');
     await allure.story('Publish article');
     await allure.severity('critical');
 
+    const user = userInfo();
     const pm = await createPageManagerAs();
     const title = `E2E Test Article ${Date.now()}`;
 
@@ -22,6 +24,7 @@ test.describe('US-001. Publish Article', () => {
 
     await test.step('Step 2: Click New Article — editor page opens', async () => {
       await pm.navbar.NewArticle.click();
+      await expect(pm.page).toHaveURL('/editor');
       await expect(pm.editorPage.titleInput).toBeVisible();
       await expect(pm.editorPage.descriptionInput).toBeVisible();
       await expect(pm.editorPage.bodyInput).toBeVisible();
@@ -48,7 +51,7 @@ test.describe('US-001. Publish Article', () => {
       await expect(pm.editorPage.tagInput).toHaveValue('');
     });
 
-    await test.step('Step 5: Publish — navigate to article view; verify title, body, tag, Edit/Delete controls', async () => {
+    await test.step('Step 5: Publish — navigate to article view; verify author, title, body, tag, Edit/Delete controls', async () => {
       const [publishResponse] = await Promise.all([
         pm.page.waitForResponse(
           (response) =>
@@ -68,7 +71,9 @@ test.describe('US-001. Publish Article', () => {
 
       articleSlug = slug;
 
+      await expect(pm.page).toHaveURL(`/article/${encodeURIComponent(slug)}`);
       await expect(pm.articleViewPage.heading).toHaveText(title);
+      await expect(pm.articleViewPage.author).toHaveText(user.name);
       await expect(pm.articleViewPage.body).toHaveText('E2E body content.');
       await expect(
         pm.articleViewPage.tags.filter({ hasText: 'e2e' }),
@@ -95,8 +100,14 @@ test.describe('US-001. Publish Article', () => {
         description: 'Description',
         body: 'Body text',
       });
-      expect(response.status()).toBe(401);
-      const responseBody = await response.json();
+      const status = response.status();
+      const rawBody = await response.body();
+      await test.info().attach(`API response (HTTP ${status})`, {
+        body: rawBody,
+        contentType: 'text/plain',
+      });
+      expect(status).toBe(401);
+      const responseBody = JSON.parse(rawBody.toString('utf8'));
       expect(responseBody).toMatchObject({
         errors: { token: [expect.any(String)] },
       });
@@ -115,14 +126,16 @@ test.describe('US-001. Publish Article', () => {
         description: 'BVA boundary test',
         body: 'BVA boundary body',
       });
-      const responseBody = await response.json();
-      await test.info().attach('API response', {
-        body: JSON.stringify(responseBody, null, 2),
-        contentType: 'application/json',
+      const status = response.status();
+      const rawBody = await response.body();
+      await test.info().attach(`API response (HTTP ${status})`, {
+        body: rawBody,
+        contentType: 'text/plain',
       });
+      expect(status).toBe(201);
+      const responseBody = JSON.parse(rawBody.toString('utf8'));
       expect(responseBody?.article?.slug).toEqual(expect.stringMatching(/\S/));
       articleSlug = responseBody.article.slug;
-      expect(response.status()).toBe(201);
       expect(responseBody).toMatchObject({
         article: {
           title,

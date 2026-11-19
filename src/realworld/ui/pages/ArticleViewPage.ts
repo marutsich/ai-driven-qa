@@ -2,6 +2,7 @@ import { BasePage } from '../../base/base-page';
 
 export class ArticleViewPage extends BasePage {
   heading = this.page.getByRole('heading', { level: 1 });
+  author = this.page.locator('.banner .article-meta .author');
   body = this.page.locator('.article-content p');
   tags = this.page.locator(
     '.article-content .tag-list li.tag-default.tag-pill.tag-outline',
