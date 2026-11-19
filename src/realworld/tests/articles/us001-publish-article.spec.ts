@@ -120,11 +120,11 @@ test.describe('US-001. Publish Article', () => {
         body: JSON.stringify(responseBody, null, 2),
         contentType: 'application/json',
       });
-      articleSlug = responseBody.article?.slug;
+      expect(responseBody?.article?.slug).toEqual(expect.stringMatching(/\S/));
+      articleSlug = responseBody.article.slug;
       expect(response.status()).toBe(201);
       expect(responseBody).toMatchObject({
         article: {
-          slug: expect.stringMatching(/\S/),
           title,
           description: 'BVA boundary test',
           body: 'BVA boundary body',
