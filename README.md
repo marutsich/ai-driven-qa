@@ -1,207 +1,101 @@
-# AI-Driven QA Pipeline
+# RealWorld QA Automation
 
-Demo project showing how Codex skills and GitHub Copilot custom agents can support the full QA workflow: requirements analysis, test design, and test automation.
+A TypeScript and Playwright test framework for RealWorld, with UI and API coverage for article publishing. Tests run locally, in Docker, and through GitHub Actions, which publishes Playwright HTML and Allure reports. The repository also includes experimental Codex skills and GitHub Copilot agents for QA workflows.
 
-The project combines a TypeScript + Playwright automation framework with three QA workflows available as Codex skills and Copilot agents. They turn a user story into clarified requirements, traceable UI/API test cases, and executable automated tests.
+[Published reports](https://marutsich.github.io/ai-driven-qa/) · [Playwright spec](src/realworld/tests/articles/us001-publish-article.spec.ts) · [Quick Start](#quick-start)
 
-## Using Codex in VS Code
+## Example — Publish an Article
 
-Codex reads the project conventions from `AGENTS.md` and discovers the QA skills in `.agents/skills/`.
+[US-001 user story](user-stories/realworld/US-001-publish-article-v2.md) → [UI cases](test-cases/realworld/articles/US-001/ui/test-cases.md) and [API cases](test-cases/realworld/articles/US-001/api/test-cases.md) → [Playwright tests](src/realworld/tests/articles/us001-publish-article.spec.ts)
 
-| Codex prompt | Workflow |
-|--------------|----------|
-| `$analyze user-stories/realworld/US-001-publish-article.md` | Review requirements and produce prioritized BA questions |
-| `$design-tests user-stories/realworld/US-001-publish-article-v2.md` | Design traceable UI/API test cases |
-| `$automate test-cases/realworld/articles/US-001/ui/test-cases.md` | Implement selected cases and verify Playwright tests |
+Coverage includes publishing through the UI and finding the article in the global feed, an unauthenticated API request returning `401`, and successful API publishing with a 100-character title.
 
-Include the specific case IDs when automating only part of a test-case document. You can also request these workflows in plain language.
+## Quick Start
 
-Playwright MCP is configured for Codex in `.codex/config.toml`. It uses the project's installed `@playwright/mcp` dependency with `npx --no-install`, avoiding an interactive package installation at server startup. Run `npm ci` after cloning to install the locked dependencies.
-
-Open this repository as a trusted project in Codex. After adding the configuration, restart the Codex extension and start a new conversation so it loads the project instructions and MCP tools. Run `codex mcp list` from the repository root to check the configured server. The existing `.vscode/mcp.json` and `.github/` files continue to support Copilot.
-
-Codex setup references: [MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli), [AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), and [local skills](https://learn.chatgpt.com/docs/build-skills).
-
-## Application Under Test
-
-The tests target one of the community implementations of the RealWorld app: [realworld-django-rest-framework-angular](https://github.com/thanhdev/realworld-django-rest-framework-angular).
-
-RealWorld is a Medium-like demo application used for comparing frontend, backend, and full-stack implementations across different technology stacks. In this repository it is used as a realistic product surface for demonstrating the QA pipeline.
-
-## Why AI-Driven?
-
-This project uses AI as part of the QA process architecture, not only as an occasional coding assistant. Each agent has a defined role, input, workflow, and output, so the process can be repeated from story to story.
-
-The human QA engineer still reviews decisions, resolves ambiguities, and owns the final quality bar. The agents standardize repetitive analysis and implementation steps, while the Playwright framework keeps the final result executable and maintainable.
-
-## Pipeline Overview
-
-```mermaid
-flowchart LR
-    US[User Story] --> RA[Requirements Analysis Agent]
-    RA --> US2[Clarified User Story]
-    US2 --> TD[Test Designer Agent]
-    TD --> TC[UI/API Test Cases]
-    TC --> TA[Test Automator Agent]
-    TA --> PW[Playwright Tests]
-```
-
-## What This Project Demonstrates
-
-- Agent-driven QA workflow using GitHub Copilot custom agents
-- Requirements analysis before implementation starts
-- Traceable test design based on acceptance criteria and API contracts
-- UI and API test case generation for the RealWorld demo application
-- Playwright automation framework written in TypeScript
-- Page Object Model for UI tests and API client layer for API tests
-- Reusable project conventions through Copilot instructions, agents, and slash commands
-
-## Custom Copilot Agents
-
-The project contains three custom agents in `.github/agents/`.
-
-### Requirements Analysis
-
-Reviews a user story for ambiguity, inconsistency, incompleteness, missing boundaries, weak error handling, and untestable acceptance criteria.
-
-Output includes:
-
-- AC coverage review
-- quality findings
-- boundary condition gaps
-- error handling gaps
-- risk matrix
-- prioritized BA questions
-
-### Test Designer
-
-Turns a clarified user story into complete, traceable test cases.
-
-The agent designs:
-
-- UI test cases from acceptance criteria
-- API test cases from the OpenAPI specification
-- one focused E2E scenario per story
-- traceability matrix from AC to test cases
-- coverage summary and known gaps
-
-### Test Automator
-
-Takes selected test cases and implements verified Playwright tests.
-
-The agent follows the existing automation framework, reuses Page Objects and API clients, validates selectors through Playwright MCP when needed, and runs the relevant tests after implementation.
-
-## Slash Commands
-
-The same workflows can be triggered through slash commands stored in `.github/prompts/`:
-
-| Command | Purpose |
-|---------|---------|
-| `/analyze` | Run requirements analysis for a user story |
-| `/design-tests` | Generate UI/API test cases from clarified requirements |
-| `/automate` | Implement Playwright tests from selected test cases |
-
-## Automation Framework
-
-The test automation layer is built with TypeScript and Playwright.
-
-Key framework conventions:
-
-- Page Objects extend `BasePage`
-- API clients extend `BaseApiClient`
-- UI pages are accessed through `RealWorldPageManager`
-- API clients are accessed through `ApiManager`
-- tests import fixtures from `src/realworld/base/base-test.ts`
-- authenticated contexts are prepared through the Playwright setup project
-- tests are tagged with labels such as `@E2E`, `@Smoke`, `@CriticalPath`, and `@Extended`
-
-## Project Structure
-
-```text
-.github/agents/       Custom GitHub Copilot agents
-.github/prompts/      Slash commands for agent workflows
-AGENTS.md             Codex project instructions
-.agents/skills/       Codex QA skills: analyze, design-tests, automate
-.codex/config.toml    Codex Playwright MCP configuration
-docs/realworld/       OpenAPI specification and reference docs
-user-stories/         Original and clarified user stories
-test-cases/           Generated UI and API test cases
-src/realworld/ui/     Page Objects and UI page manager
-src/realworld/api/    API clients and API manager
-src/realworld/base/   Shared Playwright fixtures and base classes
-src/realworld/tests/  Automated Playwright tests
-```
-
-## Example Flow: Publish Article
-
-The repository includes an example workflow for `US-001: Publish Article`.
-
-1. The initial user story contains broad acceptance criteria and missing boundary details.
-2. The Requirements Analysis agent identifies ambiguity, missing constraints, and risk areas.
-3. The clarified v2 story defines field limits, validation rules, authorization behavior, error handling, and performance expectations.
-4. The Test Designer agent creates UI and API test cases with AC traceability.
-5. The Test Automator agent implements selected Playwright tests using the framework conventions.
-
-Relevant artifacts:
-
-- `user-stories/realworld/US-001-publish-article.md`
-- `user-stories/realworld/US-001-publish-article-v2.md`
-- `test-cases/realworld/articles/US-001/ui/test-cases.md`
-- `test-cases/realworld/articles/US-001/api/test-cases.md`
-- `src/realworld/tests/articles/us001-publish-article.spec.ts`
-
-## Running Tests
-
-Install dependencies:
+Use Node.js 24 and the [hosted RealWorld demo](https://demo.realworld.show/).
 
 ```bash
-npm install
-npx playwright install
+git clone https://github.com/marutsich/ai-driven-qa.git
+cd ai-driven-qa
+npm ci
+npx playwright install chromium
+cp example.env .env
 ```
 
-Create or update `.env` from `example.env`, then make sure the RealWorld app is running at:
+On Linux, add `--with-deps` to the Chromium install command if system libraries are missing.
 
-```text
-http://localhost:8000
+Set `REAL_WORLD_PROJECT_DATA` in `.env` as one line of JSON using [`example.env`](example.env). Keep the demo URLs and replace the credential placeholders.
+
+```dotenv
+REAL_WORLD_PROJECT_DATA={"baseUrl":"https://demo.realworld.show","apiBaseUrl":"https://api.realworld.show/api/","users":[{"name":"<test-username>","username":"<test-email>","password":"<test-password>"}]}
 ```
 
-Refresh authentication state:
-
-```bash
-npm run test:setup
-```
-
-Run the E2E tests:
-
-```bash
-npm run test:e2e -- --reporter=line
-```
-
-Run the full Playwright suite:
+`baseUrl` is the frontend URL and `apiBaseUrl` is the API root. For each user, `name` is the signup username and `username` holds the signup email.
 
 ```bash
 npm test
-```
-
-Open the Playwright HTML report:
-
-```bash
 npm run report
 ```
 
-## Resume Highlights
+Playwright automatically runs `realworld-setup` before the suite. [Setup](src/realworld/tests/users.setup.ts) submits the demo's signup form and saves the browser session. The hosted demo accepts repeat signup with the same credentials.
 
-- Designed an AI-driven QA pipeline around GitHub Copilot custom agents
-- Built a TypeScript + Playwright automation framework for the RealWorld app
-- Implemented Page Object and API client abstractions
-- Created a repeatable workflow from user story analysis to executable tests
-- Demonstrated traceability between requirements, test cases, and automated coverage
-- Used agent instructions and slash commands to encode QA process knowledge inside the repository
+```bash
+npm run test:e2e -- --reporter=line  # E2E
+npm run test:setup                  # Authentication setup
+npm run typecheck
+npm run lint
+npm run format:check
+```
 
-## Tech Stack
+## Test Framework
 
-- TypeScript
-- Playwright
-- GitHub Copilot custom agents
-- Playwright MCP
-- RealWorld demo application
+- [Fixtures](src/realworld/base/base-test.ts) create browser and API contexts and provide [Page Objects](src/realworld/ui/RealWorldPageManager.ts) and [API clients](src/realworld/api/ApiManager.ts).
+- UI tests load `.auth/realworld-<name>.json` and API tests read its JWT. Fixtures select accounts by worker index or accept an explicit account index or `null` for anonymous access.
+- An `afterEach` hook deletes created articles by slug through the API and checks for `204`.
+
+## CI, Docker & Reports
+
+| GitHub Actions workflow | What it does |
+| --- | --- |
+| [Run Tests from Source](.github/workflows/run_test_from_branch.yml) | Manual run from the selected ref using `npx allure run -- npm test`. |
+| [Build Image with Tests](.github/workflows/build-image-with-tests.yml) | Pushes to `master` publish GHCR images tagged `latest` and by commit SHA. |
+| [Run Tests from Container](.github/workflows/run_tests_from_container.yml) | Manual run from a GHCR `image_tag` that defaults to `latest`. |
+| [Code Static Check](.github/workflows/code-quality.yml) | TypeScript, ESLint and Prettier checks on push or manual dispatch. |
+
+Both test workflows use the `REAL_WORLD_PROJECT_DATA` secret and publish to GitHub Pages. The workflow artifacts retain `reports/playwright-report/`, `reports/allure-report/`, `test-results/` and `allure-results/` for three days.
+
+<details>
+<summary>Run locally in Docker and keep reports</summary>
+
+Build from the [Dockerfile](Dockerfile) and reuse the `.env` from Quick Start. Bind mounts preserve the reports and results after `--rm`.
+
+```bash
+docker build -t realworld-qa .
+mkdir -p playwright-report test-results allure-results allure-report
+docker run --rm --init --ipc=host --env-file .env \
+  --mount type=bind,source="$(pwd)/playwright-report",target=/app/playwright-report \
+  --mount type=bind,source="$(pwd)/test-results",target=/app/test-results \
+  --mount type=bind,source="$(pwd)/allure-results",target=/app/allure-results \
+  --mount type=bind,source="$(pwd)/allure-report",target=/app/allure-report \
+  realworld-qa
+```
+
+To use the published image, replace the final argument with `ghcr.io/marutsich/ai-driven-qa:latest`.
+
+</details>
+
+- **Playwright HTML** lives in `playwright-report/`. Open it with `npm run report`.
+- **Allure** lives in `allure-report/` after an Allure-wrapped or Docker run. Use `npx allure open ./allure-report`, or open raw results from `npm test` with `npx allure open ./allure-results`.
+- For extracted CI artifacts, use `npm run report -- ./reports/playwright-report` or `npx allure open ./reports/allure-report` from the project root.
+
+## Experimental AI Workflow
+
+Codex skills and GitHub Copilot agents experiment with turning requirements into test cases and Playwright specs.
+
+| Task | Codex | Copilot |
+| --- | --- | --- |
+| Analyze requirements | [`$analyze`](.agents/skills/analyze/SKILL.md) + story path | [`/analyze`](.github/prompts/analyze.prompt.md) |
+| Design tests | [`$design-tests`](.agents/skills/design-tests/SKILL.md) + reviewed story path | [`/design-tests`](.github/prompts/design-tests.prompt.md) |
+| Automate cases | [`$automate`](.agents/skills/automate/SKILL.md) + case path and IDs | [`/automate`](.github/prompts/automate.prompt.md) |
+
+[Project instructions](AGENTS.md) · [Copilot agents](.github/agents/) · [Playwright MCP config](.codex/config.toml)
