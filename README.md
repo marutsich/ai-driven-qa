@@ -2,7 +2,7 @@
 
 A TypeScript and Playwright test framework for RealWorld, with UI and API coverage for article publishing. Tests run locally, in Docker, and through GitHub Actions, which publishes Playwright HTML and Allure reports. The repository also includes experimental Codex skills and GitHub Copilot agents for QA workflows.
 
-[Published reports](https://marutsich.github.io/ai-driven-qa/) · [Playwright spec](src/realworld/tests/articles/us001-publish-article.spec.ts) · [Quick Start](#quick-start)
+[Published reports](https://marutsich.github.io/realworld-qa-portfolio/) · [Playwright spec](src/realworld/tests/articles/us001-publish-article.spec.ts) · [Quick Start](#quick-start)
 
 ## Example — Publish an Article
 
@@ -15,8 +15,8 @@ Coverage includes publishing through the UI and finding the article in the globa
 Use Node.js 24 and the [hosted RealWorld demo](https://demo.realworld.show/).
 
 ```bash
-git clone https://github.com/marutsich/ai-driven-qa.git
-cd ai-driven-qa
+git clone https://github.com/marutsich/realworld-qa-portfolio.git
+cd realworld-qa-portfolio
 npm ci
 npx playwright install chromium
 cp example.env .env
