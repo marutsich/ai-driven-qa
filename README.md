@@ -85,7 +85,7 @@ To use the published image, replace the final argument with `ghcr.io/marutsich/a
 </details>
 
 - **Playwright HTML** lives in `playwright-report/`. Open it with `npm run report`.
-- **Allure** lives in `allure-report/` after an Allure-wrapped or Docker run. Use `npx allure open ./allure-report`, or open raw results from `npm test` with `npx allure open ./allure-results`.
+- **Allure** reports are generated in `allure-report/` by `npx allure run -- npm test` or a Docker run. Open the report with `npx allure open ./allure-report`. If you already ran `npm test`, first generate the report with `npx allure generate ./allure-results`.
 - For extracted CI artifacts, use `npm run report -- ./reports/playwright-report` or `npx allure open ./reports/allure-report` from the project root.
 
 ## Experimental AI Workflow
